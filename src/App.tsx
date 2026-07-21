@@ -21,11 +21,12 @@ import OwnerProfile from './pages/OwnerProfile';
 
 export default function App() {
   return (
-    <BrowserRouter basename="/app/owner">
+    <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         
-        <Route path="/" element={<AppShell />}>
+        {/* Wrap owner routes in /app/owner to match requirements */}
+        <Route path="/app/owner" element={<AppShell />}>
           <Route index element={<Dashboard />} />
           <Route path="bookings" element={<Bookings />} />
           <Route path="calendar" element={<BookingCalendar />} />
@@ -44,7 +45,7 @@ export default function App() {
           <Route path="owner-profile" element={<OwnerProfile />} />
         </Route>
         
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/app/owner" replace />} />
       </Routes>
     </BrowserRouter>
   );
