@@ -19,7 +19,7 @@ export default function OwnerProfile() {
 
   const menuItems = [
     { icon: User, label: 'Personal Details', color: 'text-blue-500', bg: 'bg-blue-50' },
-    { icon: Store, label: 'Business Profile', color: 'text-emerald-500', bg: 'bg-emerald-50', to: '/profile' },
+    { icon: Store, label: 'Business Profile', color: 'text-emerald-500', bg: 'bg-emerald-50', to: '/app/owner/profile' },
     { icon: Moon, label: 'Appearance', color: 'text-purple-500', bg: 'bg-purple-50' },
     { icon: Bell, label: 'Notifications', color: 'text-amber-500', bg: 'bg-amber-50' },
     { icon: Languages, label: 'Language', color: 'text-indigo-500', bg: 'bg-indigo-50' },
@@ -27,7 +27,7 @@ export default function OwnerProfile() {
   ];
 
   const supportItems = [
-    { icon: HelpCircle, label: 'Help & Support', to: '/support' },
+    { icon: HelpCircle, label: 'Help & Support', to: '/app/owner/support' },
     { icon: FileText, label: 'Privacy Policy' },
     { icon: FileText, label: 'Terms of Service' },
   ];

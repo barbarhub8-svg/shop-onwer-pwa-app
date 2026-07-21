@@ -4,17 +4,17 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/bookings', label: 'Bookings', icon: CalendarDays },
-  { to: '/services', label: 'Services', icon: Scissors },
-  { to: '/staff', label: 'Staff', icon: Users },
-  { to: '/customers', label: 'Customers', icon: UserCircle },
-  { to: '/reviews', label: 'Reviews', icon: Star },
-  { to: '/website', label: 'Website', icon: Globe },
-  { to: '/wallet', label: 'Wallet', icon: Wallet },
-  { to: '/analytics', label: 'Analytics', icon: LineChart },
-  { to: '/support', label: 'Support', icon: HelpCircle },
-  { to: '/owner-profile', label: 'Profile', icon: User },
+  { to: '/app/owner', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/app/owner/bookings', label: 'Bookings', icon: CalendarDays },
+  { to: '/app/owner/services', label: 'Services', icon: Scissors },
+  { to: '/app/owner/staff', label: 'Staff', icon: Users },
+  { to: '/app/owner/customers', label: 'Customers', icon: UserCircle },
+  { to: '/app/owner/reviews', label: 'Reviews', icon: Star },
+  { to: '/app/owner/website', label: 'Website', icon: Globe },
+  { to: '/app/owner/wallet', label: 'Wallet', icon: Wallet },
+  { to: '/app/owner/analytics', label: 'Analytics', icon: LineChart },
+  { to: '/app/owner/support', label: 'Support', icon: HelpCircle },
+  { to: '/app/owner/owner-profile', label: 'Profile', icon: User },
 ];
 
 export default function OwnerSidebar() {
@@ -29,6 +29,7 @@ export default function OwnerSidebar() {
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.end}
             className={({ isActive }) => twMerge(
               clsx(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",

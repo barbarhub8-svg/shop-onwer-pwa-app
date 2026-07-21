@@ -29,7 +29,7 @@ export default function Bookings() {
           <p className="text-slate-500 mt-1">Manage your daily schedule</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link to="/calendar" className="inline-flex items-center justify-center p-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors">
+          <Link to="/app/owner/calendar" className="inline-flex items-center justify-center p-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors">
             <CalendarIcon className="w-5 h-5" />
           </Link>
           <div className="flex items-center bg-white border border-slate-200 rounded-lg p-1">

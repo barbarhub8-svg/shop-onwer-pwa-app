@@ -3,11 +3,11 @@ import { LayoutDashboard, CalendarDays, Globe, Wallet, User } from 'lucide-react
 import { clsx } from 'clsx';
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/bookings', label: 'Bookings', icon: CalendarDays },
-  { to: '/website', label: 'Website', icon: Globe },
-  { to: '/wallet', label: 'Wallet', icon: Wallet },
-  { to: '/owner-profile', label: 'Profile', icon: User },
+  { to: '/app/owner', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/app/owner/bookings', label: 'Bookings', icon: CalendarDays },
+  { to: '/app/owner/website', label: 'Website', icon: Globe },
+  { to: '/app/owner/wallet', label: 'Wallet', icon: Wallet },
+  { to: '/app/owner/owner-profile', label: 'Profile', icon: User },
 ];
 
 export default function BottomNavigation() {
@@ -18,6 +18,7 @@ export default function BottomNavigation() {
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.end}
             className={({ isActive }) => clsx(
               "flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors",
               isActive ? "text-blue-600" : "text-slate-500 hover:text-slate-900"

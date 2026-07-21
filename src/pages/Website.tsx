@@ -89,7 +89,7 @@ export default function Website() {
         </div>
 
         <div className="space-y-6">
-          <Link to="/templates" className="block bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-300 transition-colors group">
+          <Link to="/app/owner/templates" className="block bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-300 transition-colors group">
             <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <LayoutTemplate className="w-5 h-5" />
             </div>
@@ -99,7 +99,7 @@ export default function Website() {
             <p className="text-sm text-slate-500 mt-1">Currently using "Royal Luxe"</p>
           </Link>
 
-          <Link to="/gallery" className="block bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-300 transition-colors group">
+          <Link to="/app/owner/gallery" className="block bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-300 transition-colors group">
             <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Image className="w-5 h-5" />
             </div>

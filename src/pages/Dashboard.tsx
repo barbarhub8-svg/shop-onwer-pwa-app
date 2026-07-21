@@ -65,7 +65,7 @@ export default function Dashboard() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
               <h2 className="text-lg font-semibold text-slate-900">Today's Schedule</h2>
-              <Link to="/bookings" className="text-sm text-blue-600 font-medium hover:underline flex items-center">
+              <Link to="/app/owner/bookings" className="text-sm text-blue-600 font-medium hover:underline flex items-center">
                 View All <ChevronRight className="w-4 h-4" />
               </Link>
             </div>

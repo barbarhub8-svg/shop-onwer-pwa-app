@@ -21,7 +21,7 @@ export default function TemplateSelection() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/website" className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+        <Link to="/app/owner/website" className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
