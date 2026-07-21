@@ -23,6 +23,15 @@ export default function Services() {
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
+    const newSvc = {
+      id: Date.now(),
+      name: (e.target as any).svcName.value,
+      category: (e.target as any).svcCat.value,
+      duration: (e.target as any).svcDur.value,
+      price: '₹' + (e.target as any).svcPrice.value,
+      active: true
+    };
+    setServices([newSvc, ...services]);
     setIsAddModalOpen(false);
     showToast('New service added');
   };
@@ -94,12 +103,12 @@ export default function Services() {
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Service Name</label>
-            <input type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
+            <input name="svcName" type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-              <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none bg-white">
+              <select name="svcCat" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none bg-white">
                 <option>Hair</option>
                 <option>Makeup</option>
                 <option>Spa</option>
@@ -108,7 +117,7 @@ export default function Services() {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Duration</label>
-              <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none bg-white">
+              <select name="svcDur" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none bg-white">
                 <option>30 Min</option>
                 <option>45 Min</option>
                 <option>60 Min</option>
@@ -119,7 +128,7 @@ export default function Services() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Price (₹)</label>
-              <input type="number" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
+              <input name="svcPrice" type="number" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Discount Price (Optional)</label>

@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { ArrowLeft, CheckCircle2, Eye } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Eye, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { templatesData } from '../data/mock';
 import Toast from '../components/Toast';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TemplateSelection() {
   const [toast, setToast] = useState({ visible: false, message: '' });
   const [templates, setTemplates] = useState(templatesData);
+  const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
 
   const showToast = (message: string) => {
     setToast({ visible: true, message });
@@ -36,7 +38,7 @@ export default function TemplateSelection() {
             <div className="aspect-[4/3] bg-slate-100 relative group overflow-hidden">
               <img src={template.img} alt={template.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
               <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                <button onClick={() => showToast('Opening Live Preview...')} className="px-4 py-2 bg-white text-slate-900 font-medium rounded-lg text-sm flex items-center gap-2">
+                <button onClick={() => setPreviewTemplate(template.img)} className="px-4 py-2 bg-white text-slate-900 font-medium rounded-lg text-sm flex items-center gap-2">
                   <Eye className="w-4 h-4" /> Preview
                 </button>
               </div>
@@ -66,6 +68,36 @@ export default function TemplateSelection() {
         ))}
       </div>
       <Toast visible={toast.visible} message={toast.message} />
+
+      <AnimatePresence>
+        {previewTemplate && (
+          <motion.div 
+            initial={{ opacity: 0, y: '100%' }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-50 bg-white flex flex-col"
+          >
+            <div className="h-16 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-50">
+              <h2 className="font-bold text-slate-900">Live Preview</h2>
+              <button onClick={() => setPreviewTemplate(null)} className="p-2 text-slate-500 hover:bg-slate-200 rounded-full transition-colors">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="flex-1 bg-slate-200 overflow-y-auto p-4 md:p-8 flex justify-center">
+              <div className="max-w-md w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden border-8 border-slate-800">
+                <img src={previewTemplate} alt="Preview" className="w-full object-cover" />
+                <div className="p-6 space-y-4">
+                  <div className="h-8 bg-slate-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-slate-200 rounded w-full"></div>
+                  <div className="h-4 bg-slate-200 rounded w-5/6"></div>
+                  <div className="h-32 bg-slate-200 rounded-xl w-full mt-8"></div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

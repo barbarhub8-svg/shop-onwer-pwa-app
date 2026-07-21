@@ -3,10 +3,12 @@ import { User, Store, Bell, Moon, Languages, Shield, HelpCircle, FileText, LogOu
 import { useNavigate, Link } from 'react-router-dom';
 import { shopInfo } from '../data/mock';
 import Toast from '../components/Toast';
+import Modal from '../components/Modal';
 
 export default function OwnerProfile() {
   const navigate = useNavigate();
   const [toast, setToast] = useState({ visible: false, message: '' });
+  const [activeSettingModal, setActiveSettingModal] = useState<string | null>(null);
 
   const showToast = (message: string) => {
     setToast({ visible: true, message });
@@ -68,7 +70,7 @@ export default function OwnerProfile() {
             return item.to ? (
               <Link key={idx} to={item.to} className="block">{content}</Link>
             ) : (
-              <button key={idx} onClick={() => showToast(`Opened ${item.label}`)} className="block w-full">{content}</button>
+              <button key={idx} onClick={() => setActiveSettingModal(item.label)} className="block w-full">{content}</button>
             );
           })}
         </div>
@@ -92,7 +94,7 @@ export default function OwnerProfile() {
             return item.to ? (
               <Link key={idx} to={item.to} className="block">{content}</Link>
             ) : (
-              <button key={idx} onClick={() => showToast(`Opened ${item.label}`)} className="block w-full">{content}</button>
+              <button key={idx} onClick={() => setActiveSettingModal(item.label)} className="block w-full">{content}</button>
             );
           })}
         </div>
@@ -105,6 +107,53 @@ export default function OwnerProfile() {
       <div className="text-center pb-8">
         <p className="text-xs text-slate-400 font-medium">NexoraOS version 1.0.0</p>
       </div>
+
+      <Modal isOpen={!!activeSettingModal} onClose={() => setActiveSettingModal(null)} title={activeSettingModal || ''}>
+        <div className="space-y-6">
+          {activeSettingModal === 'Appearance' && (
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-slate-700">Dark Mode</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" onChange={() => showToast('Dark mode toggled')} />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+          )}
+          {activeSettingModal === 'Notifications' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-slate-700">Push Notifications</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked onChange={() => showToast('Settings updated')} />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-slate-700">Email Alerts</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked onChange={() => showToast('Settings updated')} />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+            </div>
+          )}
+          {activeSettingModal === 'Language' && (
+            <select className="w-full px-4 py-2 border border-slate-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-600">
+              <option>English</option>
+              <option>Hindi</option>
+              <option>Spanish</option>
+            </select>
+          )}
+          {activeSettingModal === 'Security' && (
+            <button onClick={() => {showToast('Password reset link sent'); setActiveSettingModal(null);}} className="w-full py-2 bg-blue-50 text-blue-700 font-medium rounded-xl">
+              Change Password
+            </button>
+          )}
+          {['Personal Details', 'Privacy Policy', 'Terms of Service'].includes(activeSettingModal || '') && (
+            <p className="text-sm text-slate-500">This feature is not available in the demo version.</p>
+          )}
+        </div>
+      </Modal>
 
       <Toast visible={toast.visible} message={toast.message} />
     </div>
