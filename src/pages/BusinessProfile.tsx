@@ -1,11 +1,37 @@
-import { useState, useRef } from 'react';
-import { Camera, MapPin, Building, Globe, Clock, Save } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Camera, MapPin, Building, Save } from 'lucide-react';
+import { api } from '../lib/api';
 import Toast from '../components/Toast';
 
 export default function BusinessProfile() {
   const [toast, setToast] = useState({ visible: false, message: '' });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [shopData, setShopData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+      const [shop, profile] = await Promise.all([api.getShop(), api.getProfile()]);
+      setShopData(shop);
+      setProfileData(profile);
+      if (shop.logo_url) setLogoUrl(shop.logo_url);
+    } catch (err) {
+      console.error(err);
+      showToast('Error loading business profile');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const showToast = (message: string) => {
     setToast({ visible: true, message });
@@ -14,16 +40,50 @@ export default function BusinessProfile() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const newUrl = URL.createObjectURL(e.target.files[0]);
-      setLogoUrl(newUrl);
-      showToast('Logo uploaded successfully');
+      const file = e.target.files[0];
+      setLogoFile(file);
+      setLogoUrl(URL.createObjectURL(file));
+      showToast('Logo ready to be saved');
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    showToast('Profile updated successfully');
+    setIsSaving(true);
+    const form = e.target as HTMLFormElement;
+
+    try {
+      let finalLogoUrl = shopData?.logo_url || null;
+      if (logoFile) {
+        finalLogoUrl = await api.uploadFile(logoFile, 'logos');
+      }
+
+      await api.updateShop({
+        name: form.shopName.value,
+        phone: form.shopPhone.value,
+        email: form.shopEmail.value,
+        description: form.shopDesc.value,
+        address: form.shopAddress.value,
+        city: form.shopCity.value,
+        pin_code: form.shopPin.value,
+        logo_url: finalLogoUrl
+      });
+
+      await api.updateProfile({
+        full_name: form.ownerName.value
+      });
+
+      showToast('Profile updated successfully');
+    } catch (err) {
+      showToast('Error updating profile');
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return <div className="p-8 text-center text-slate-500">Loading business profile...</div>;
+  }
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -67,24 +127,24 @@ export default function BusinessProfile() {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Shop Name</label>
-              <input type="text" defaultValue="Royal Glow Salon" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" required />
+              <input name="shopName" defaultValue={shopData?.name} type="text" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" required />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Owner Name</label>
-              <input type="text" defaultValue="Rajesh" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" required />
+              <input name="ownerName" defaultValue={profileData?.full_name} type="text" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" required />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
-              <input type="tel" defaultValue="+91 9876543210" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" required />
+              <input name="shopPhone" defaultValue={shopData?.phone} type="tel" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
-              <input type="email" defaultValue="contact@royalglow.com" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" required />
+              <input name="shopEmail" defaultValue={shopData?.email} type="email" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
-            <textarea rows={3} defaultValue="Premium beauty salon offering hair, skin, and bridal makeup services." className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none resize-none" required></textarea>
+            <textarea name="shopDesc" rows={3} defaultValue={shopData?.description} className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none resize-none"></textarea>
           </div>
         </div>
 
@@ -95,24 +155,24 @@ export default function BusinessProfile() {
           
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Address</label>
-            <textarea rows={2} defaultValue="123, Fashion Street, Near City Mall" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none resize-none" required></textarea>
+            <textarea name="shopAddress" rows={2} defaultValue={shopData?.address} className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none resize-none"></textarea>
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
-              <input type="text" defaultValue="Mumbai" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" required />
+              <input name="shopCity" defaultValue={shopData?.city} type="text" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">PIN Code</label>
-              <input type="text" defaultValue="400001" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" required />
+              <input name="shopPin" defaultValue={shopData?.pin_code} type="text" className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none" />
             </div>
           </div>
         </div>
 
         <div className="flex justify-end gap-4 pb-16 md:pb-0">
           <button type="button" className="px-6 py-2.5 bg-white border border-slate-300 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition-colors">Cancel</button>
-          <button type="submit" className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2">
-            <Save className="w-4 h-4" /> Save Changes
+          <button type="submit" disabled={isSaving} className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2 disabled:opacity-50">
+            <Save className="w-4 h-4" /> {isSaving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </form>
