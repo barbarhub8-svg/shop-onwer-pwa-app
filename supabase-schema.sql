@@ -4,30 +4,31 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ==========================================
--- DANGER ZONE: CLEANUP EXISTING RELATIONS
+-- DANGER ZONE: INTELLIGENT CLEANUP
 -- ==========================================
--- Use CASCADE to handle dependencies.
--- We check for VIEWS and TABLES to avoid type mismatch errors.
+-- This block uses an anonymous DO block to check if the relations exist
+-- and drops them using the correct command (DROP VIEW or DROP TABLE)
+-- dynamically to avoid type mismatch errors.
 
-DROP VIEW IF EXISTS gallery CASCADE;
-DROP VIEW IF EXISTS transactions CASCADE;
-DROP VIEW IF EXISTS reviews CASCADE;
-DROP VIEW IF EXISTS bookings CASCADE;
-DROP VIEW IF EXISTS services CASCADE;
-DROP VIEW IF EXISTS staff CASCADE;
-DROP VIEW IF EXISTS customers CASCADE;
-DROP VIEW IF EXISTS shops CASCADE;
-DROP VIEW IF EXISTS profiles CASCADE;
+DO $$ 
+DECLARE
+    rel_record RECORD;
+BEGIN
+    FOR rel_record IN 
+        SELECT relname, relkind 
+        FROM pg_class 
+        JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
+        WHERE nspname = 'public' 
+        AND relname IN ('gallery', 'transactions', 'reviews', 'bookings', 'services', 'staff', 'customers', 'shops', 'profiles')
+    LOOP
+        IF rel_record.relkind = 'v' THEN
+            EXECUTE 'DROP VIEW IF EXISTS ' || quote_ident(rel_record.relname) || ' CASCADE;';
+        ELSIF rel_record.relkind = 'r' THEN
+            EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(rel_record.relname) || ' CASCADE;';
+        END IF;
+    END LOOP;
+END $$;
 
-DROP TABLE IF EXISTS gallery CASCADE;
-DROP TABLE IF EXISTS transactions CASCADE;
-DROP TABLE IF EXISTS reviews CASCADE;
-DROP TABLE IF EXISTS bookings CASCADE;
-DROP TABLE IF EXISTS services CASCADE;
-DROP TABLE IF EXISTS staff CASCADE;
-DROP TABLE IF EXISTS customers CASCADE;
-DROP TABLE IF EXISTS shops CASCADE;
-DROP TABLE IF EXISTS profiles CASCADE;
 
 -- ==========================================
 -- 1. PROFILES / USERS TABLE
