@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, MoreVertical, Edit2, Copy, Trash2 } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import { servicesData } from '../data/mock';
 import Modal from '../components/Modal';
 import Toast from '../components/Toast';
@@ -7,6 +7,7 @@ import Toast from '../components/Toast';
 export default function Services() {
   const [services, setServices] = useState(servicesData);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState<any>(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
 
   const showToast = (message: string) => {
@@ -21,19 +22,39 @@ export default function Services() {
     }
   };
 
-  const handleAdd = (e: React.FormEvent) => {
+  const openEditModal = (service: any) => {
+    setEditingService(service);
+    setIsAddModalOpen(true);
+  };
+
+  const handleAddOrEdit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newSvc = {
-      id: Date.now(),
-      name: (e.target as any).svcName.value,
-      category: (e.target as any).svcCat.value,
-      duration: (e.target as any).svcDur.value,
-      price: '₹' + (e.target as any).svcPrice.value,
-      active: true
-    };
-    setServices([newSvc, ...services]);
+    const form = e.target as HTMLFormElement;
+    
+    if (editingService) {
+      setServices(services.map(s => s.id === editingService.id ? {
+        ...s,
+        name: form.svcName.value,
+        category: form.svcCat.value,
+        duration: form.svcDur.value,
+        price: '₹' + form.svcPrice.value,
+        discount: form.svcDiscount.value ? '₹' + form.svcDiscount.value : undefined,
+      } : s));
+      showToast('Service updated successfully');
+    } else {
+      const newSvc = {
+        id: Date.now(),
+        name: form.svcName.value,
+        category: form.svcCat.value,
+        duration: form.svcDur.value,
+        price: '₹' + form.svcPrice.value,
+        discount: form.svcDiscount.value ? '₹' + form.svcDiscount.value : undefined,
+        active: true
+      };
+      setServices([newSvc, ...services]);
+      showToast('New service added');
+    }
     setIsAddModalOpen(false);
-    showToast('New service added');
   };
 
   return (
@@ -43,7 +64,7 @@ export default function Services() {
           <h1 className="text-2xl font-bold text-slate-900">Services</h1>
           <p className="text-slate-500 mt-1">Manage your service menu and pricing</p>
         </div>
-        <button onClick={() => setIsAddModalOpen(true)} className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+        <button onClick={() => { setEditingService(null); setIsAddModalOpen(true); }} className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
           <Plus className="w-5 h-5" /> Add Service
         </button>
       </div>
@@ -66,7 +87,7 @@ export default function Services() {
         {services.map(service => (
           <div key={service.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm relative group">
             <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-              <button onClick={() => showToast('Edit modal opened')} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md">
+              <button onClick={() => openEditModal(service)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md">
                 <Edit2 className="w-4 h-4" />
               </button>
               <button onClick={() => deleteService(service.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md">
@@ -99,16 +120,16 @@ export default function Services() {
         ))}
       </div>
 
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Add New Service">
-        <form onSubmit={handleAdd} className="space-y-4">
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title={editingService ? "Edit Service" : "Add New Service"}>
+        <form onSubmit={handleAddOrEdit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Service Name</label>
-            <input name="svcName" type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
+            <input name="svcName" defaultValue={editingService?.name} type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-              <select name="svcCat" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none bg-white">
+              <select name="svcCat" defaultValue={editingService?.category} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none bg-white">
                 <option>Hair</option>
                 <option>Makeup</option>
                 <option>Spa</option>
@@ -117,7 +138,7 @@ export default function Services() {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Duration</label>
-              <select name="svcDur" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none bg-white">
+              <select name="svcDur" defaultValue={editingService?.duration} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none bg-white">
                 <option>30 Min</option>
                 <option>45 Min</option>
                 <option>60 Min</option>
@@ -128,20 +149,20 @@ export default function Services() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Price (₹)</label>
-              <input name="svcPrice" type="number" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
+              <input name="svcPrice" defaultValue={editingService?.price?.replace('₹', '')} type="number" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Discount Price (Optional)</label>
-              <input type="number" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" />
+              <input name="svcDiscount" defaultValue={editingService?.discount?.replace('₹', '')} type="number" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" />
             </div>
           </div>
           <div className="flex items-center gap-2 pt-2">
-            <input type="checkbox" id="active-toggle" className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-600" defaultChecked />
+            <input type="checkbox" id="active-toggle" className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-600" defaultChecked={editingService ? editingService.active : true} />
             <label htmlFor="active-toggle" className="text-sm font-medium text-slate-700">Active (Visible to customers)</label>
           </div>
           <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
             <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Cancel</button>
-            <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Save Service</button>
+            <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">{editingService ? 'Update Service' : 'Save Service'}</button>
           </div>
         </form>
       </Modal>

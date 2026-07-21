@@ -9,6 +9,13 @@ export default function OwnerProfile() {
   const navigate = useNavigate();
   const [toast, setToast] = useState({ visible: false, message: '' });
   const [activeSettingModal, setActiveSettingModal] = useState<string | null>(null);
+  
+  // State for Personal Details
+  const [personalDetails, setPersonalDetails] = useState({
+    name: shopInfo.owner.name,
+    email: 'owner@royalglow.com',
+    phone: '+91 9876543210'
+  });
 
   const showToast = (message: string) => {
     setToast({ visible: true, message });
@@ -17,6 +24,18 @@ export default function OwnerProfile() {
 
   const handleLogout = () => {
     navigate('/login');
+  };
+
+  const handleSavePersonalDetails = (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    setPersonalDetails({
+      name: form.ownerName.value,
+      email: form.ownerEmail.value,
+      phone: form.ownerPhone.value
+    });
+    setActiveSettingModal(null);
+    showToast('Personal details updated successfully');
   };
 
   const menuItems = [
@@ -41,7 +60,7 @@ export default function OwnerProfile() {
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
         <img src={shopInfo.owner.avatar} alt="Profile" className="w-16 h-16 rounded-full object-cover border border-slate-200" />
         <div>
-          <h2 className="text-xl font-bold text-slate-900">{shopInfo.owner.name}</h2>
+          <h2 className="text-xl font-bold text-slate-900">{personalDetails.name}</h2>
           <p className="text-sm text-slate-500">{shopInfo.name}</p>
           <div className="mt-1 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -110,6 +129,26 @@ export default function OwnerProfile() {
 
       <Modal isOpen={!!activeSettingModal} onClose={() => setActiveSettingModal(null)} title={activeSettingModal || ''}>
         <div className="space-y-6">
+          {activeSettingModal === 'Personal Details' && (
+            <form onSubmit={handleSavePersonalDetails} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                <input name="ownerName" defaultValue={personalDetails.name} type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                <input name="ownerEmail" defaultValue={personalDetails.email} type="email" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
+                <input name="ownerPhone" defaultValue={personalDetails.phone} type="tel" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none" required />
+              </div>
+              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700">Save Details</button>
+              </div>
+            </form>
+          )}
+
           {activeSettingModal === 'Appearance' && (
             <div className="flex items-center justify-between">
               <span className="font-medium text-slate-700">Dark Mode</span>
@@ -149,7 +188,7 @@ export default function OwnerProfile() {
               Change Password
             </button>
           )}
-          {['Personal Details', 'Privacy Policy', 'Terms of Service'].includes(activeSettingModal || '') && (
+          {['Privacy Policy', 'Terms of Service'].includes(activeSettingModal || '') && (
             <p className="text-sm text-slate-500">This feature is not available in the demo version.</p>
           )}
         </div>
