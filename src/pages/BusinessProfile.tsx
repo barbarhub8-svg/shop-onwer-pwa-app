@@ -1,13 +1,23 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Camera, MapPin, Building, Globe, Clock, Save } from 'lucide-react';
 import Toast from '../components/Toast';
 
 export default function BusinessProfile() {
   const [toast, setToast] = useState({ visible: false, message: '' });
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const showToast = (message: string) => {
     setToast({ visible: true, message });
     setTimeout(() => setToast({ visible: false, message: '' }), 3000);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const newUrl = URL.createObjectURL(e.target.files[0]);
+      setLogoUrl(newUrl);
+      showToast('Logo uploaded successfully');
+    }
   };
 
   const handleSave = (e: React.FormEvent) => {
@@ -29,14 +39,25 @@ export default function BusinessProfile() {
           </h2>
           
           <div className="flex items-center gap-6">
-            <div className="relative group cursor-pointer">
+            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
               <div className="w-24 h-24 rounded-full bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden">
-                <Camera className="w-8 h-8 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                {logoUrl ? (
+                  <img src={logoUrl} alt="Shop Logo" className="w-full h-full object-cover" />
+                ) : (
+                  <Camera className="w-8 h-8 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                )}
               </div>
               <div className="absolute inset-0 bg-slate-900/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <span className="text-xs font-medium text-white">Upload</span>
+                <span className="text-xs font-medium text-white">{logoUrl ? 'Change' : 'Upload'}</span>
               </div>
             </div>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              accept="image/*" 
+              onChange={handleFileChange} 
+            />
             <div>
               <h3 className="font-medium text-slate-900">Shop Logo</h3>
               <p className="text-sm text-slate-500 mt-1">Recommended size 512x512px</p>
