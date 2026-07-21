@@ -118,22 +118,22 @@ export default function Dashboard() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
             <h2 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => showToast('Open Add Booking')} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50 transition-colors group">
+              <Link to="/app/owner/bookings" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50 transition-colors group">
                 <Plus className="w-6 h-6 text-slate-500 group-hover:text-blue-600 mb-2" />
                 <span className="text-sm font-medium text-slate-700 group-hover:text-blue-700">Add Booking</span>
-              </button>
-              <button onClick={() => showToast('Open Add Service')} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50 transition-colors group">
+              </Link>
+              <Link to="/app/owner/services" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50 transition-colors group">
                 <Scissors className="w-6 h-6 text-slate-500 group-hover:text-blue-600 mb-2" />
                 <span className="text-sm font-medium text-slate-700 group-hover:text-blue-700">Add Service</span>
-              </button>
-              <button onClick={() => showToast('Open Upload Photo')} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50 transition-colors group">
+              </Link>
+              <Link to="/app/owner/gallery" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50 transition-colors group">
                 <Image className="w-6 h-6 text-slate-500 group-hover:text-blue-600 mb-2" />
                 <span className="text-sm font-medium text-slate-700 group-hover:text-blue-700">Add Photo</span>
-              </button>
-              <button onClick={() => showToast('Open Website Builder')} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50 transition-colors group">
+              </Link>
+              <Link to="/app/owner/website" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50 transition-colors group">
                 <Globe className="w-6 h-6 text-slate-500 group-hover:text-blue-600 mb-2" />
                 <span className="text-sm font-medium text-slate-700 group-hover:text-blue-700">Edit Site</span>
-              </button>
+              </Link>
             </div>
           </div>
 
