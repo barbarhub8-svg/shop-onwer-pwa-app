@@ -4,10 +4,21 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ==========================================
--- DANGER ZONE: CLEANUP EXISTING TABLES
+-- DANGER ZONE: CLEANUP EXISTING RELATIONS
 -- ==========================================
--- Yeh lines purani tables ko delete kar dengi taaki "already exists" wala error na aaye.
--- Agar aapka koi purana jaruri data hai toh pehle uska backup le lijiye.
+-- Use CASCADE to handle dependencies.
+-- We check for VIEWS and TABLES to avoid type mismatch errors.
+
+DROP VIEW IF EXISTS gallery CASCADE;
+DROP VIEW IF EXISTS transactions CASCADE;
+DROP VIEW IF EXISTS reviews CASCADE;
+DROP VIEW IF EXISTS bookings CASCADE;
+DROP VIEW IF EXISTS services CASCADE;
+DROP VIEW IF EXISTS staff CASCADE;
+DROP VIEW IF EXISTS customers CASCADE;
+DROP VIEW IF EXISTS shops CASCADE;
+DROP VIEW IF EXISTS profiles CASCADE;
+
 DROP TABLE IF EXISTS gallery CASCADE;
 DROP TABLE IF EXISTS transactions CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
