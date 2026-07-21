@@ -8,4 +8,12 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  build: {
+    chunkSizeWarningLimit: 2000,
+    rolldownOptions: {
+      output: {
+        codeSplitting: true
+      }
+    }
+  }
 })
